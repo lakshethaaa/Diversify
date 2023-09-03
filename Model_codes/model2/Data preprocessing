@@ -1,0 +1,29 @@
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+
+# Load your dataset here
+# Ensure you have columns: Open, Close, High, Low, Volume, Adj Close, Moving Average, Percentage Returns, and stock name
+
+# Normalize the numerical features
+scaler = MinMaxScaler()
+numerical_cols = ['Open', 'Close', 'High', 'Low', 'Volume', 'Adj Close']
+df2[numerical_cols] = scaler.fit_transform(df2[numerical_cols])
+
+# Define your sequence length (e.g., number of past days to consider)
+sequence_length = 30
+
+# Create sequences of data
+X1 = []
+y1 = []
+for i in range(len(df2) - sequence_length):
+    X1.append(df2[numerical_cols].values[i:i+sequence_length])
+    y1.append(df2['Moving_Average_Percentage_Return'].values[i+sequence_length])
+
+X1 = np.array(X1)
+y1 = np.array(y1)
+
+# Split the data into training and testing sets
+train_size = int(0.8 * len(X1))
+X_train1, X_test1 = X1[:train_size], X1[train_size:]
+y_train1, y_test1 = y1[:train_size], y1[train_size:]
