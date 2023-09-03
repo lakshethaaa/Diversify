@@ -1,0 +1,21 @@
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+
+# Build the LSTM model2 with dropout layers
+model2 = Sequential()
+model2.add(LSTM(64, input_shape=(sequence_length, len(numerical_cols)), return_sequences=True))
+model2.add(Dropout(0.1))
+model2.add(LSTM(64, return_sequences=False))
+model2.add(Dropout(0.2))
+model2.add(Dense(1))
+model2.compile(optimizer=Adam(learning_rate=0.001), loss='mean_squared_error')
+
+# Train the model2 with early stopping
+from tensorflow.keras.callbacks import EarlyStopping
+
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+model2.fit(X_train2, y_train2, epochs=50, batch_size=64, validation_data=(X_test2, y_test2), callbacks=[early_stopping])
+
+# Evaluate the model2 on the test set
+loss = model2.evaluate(X_test2, y_test2)
+print(f'Test Loss: {loss}')
